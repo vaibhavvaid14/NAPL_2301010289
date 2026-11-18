@@ -1,0 +1,52 @@
+class InsufficientFundsException(
+    message: String,
+    val data: Map<String, Any>
+) : Exception(message)                      // like ex-info: message + data map
+
+fun withdraw(balance: Int, amount: Int): Int {
+    if (amount > balance)
+        throw InsufficientFundsException(
+            "Insufficient funds",
+            mapOf("type" to "insufficient-funds", "balance" to balance, "requested" to amount)
+        )
+    return balance - amount
+}
+
+fun safeRun(label: String, f: () -> Any) {
+    try {
+        println("$label -> result: ${f()}")
+    } catch (e: ArithmeticException) {
+        println("$label -> ArithmeticException caught: ${e.message}")
+    } catch (e: NullPointerException) {
+        println("$label -> NullPointerException caught")
+    } catch (e: InsufficientFundsException) {
+        println("$label -> Custom exception caught: ${e.message} ${e.data}")
+    } catch (e: Exception) {
+        println("$label -> Other exception: ${e.javaClass.simpleName}")
+    } finally {
+        println("$label -> finally block executed\n")
+    }
+}
+
+fun withdrawWithRecovery(balance: Int, amount: Int): Int =
+    try {
+        withdraw(balance, amount)
+    } catch (e: InsufficientFundsException) {
+        println("Error message : ${e.message}")
+        println("Error data    : ${e.data}")
+        println("Recovering    : short by ${amount - balance} - balance left unchanged")
+        balance
+    }
+
+fun main() {
+    println("===== TRY / CATCH / FINALLY =====")
+    safeRun("Case 1 (divide by zero)") { 10 / (0) }
+    safeRun("Case 2 (null pointer)  ") { (null as String?)!!.length }
+    safeRun("Case 3 (custom)        ") { withdraw(100, 500) }
+    safeRun("Case 4 (no exception)  ") { withdraw(500, 100) }
+    safeRun("Case 5 (other type)    ") { Integer.parseInt("abc") }
+
+    println("===== GRACEFUL RECOVERY =====")
+    println("Balance after recovery: ${withdrawWithRecovery(100, 500)}")
+    println("Balance after success : ${withdrawWithRecovery(500, 100)}")
+}
