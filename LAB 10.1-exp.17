@@ -1,0 +1,45 @@
+fun main() {
+    // ===== (1) LIST: create, first, rest, conj =====
+    println("===== LIST =====")
+    val originalList = listOf(1, 2, 3)                  // create
+    val newList = listOf(0) + originalList              // conj (adds at the front, like a Clojure list)
+    println("Original list       : $originalList")
+    println("first               : ${originalList.first()}")
+    println("rest                : ${originalList.drop(1)}")
+    println("After conj 0        : $newList")
+    println("Original (unchanged): $originalList")
+
+    // ===== (2) VECTOR: create, conj, get by index, count =====
+    println("\n===== VECTOR =====")
+    val originalVec = listOf(10, 20, 30)                // create
+    val newVec = originalVec + 40                       // conj (adds at the end, like a Clojure vector)
+    println("Original vector     : $originalVec")
+    println("get index 1         : ${originalVec[1]}")
+    println("count (original)    : ${originalVec.size}")
+    println("After conj 40       : $newVec")
+    println("count (new)         : ${newVec.size}")
+    println("Original (unchanged): $originalVec")
+
+    // ===== (3) MAP: create, assoc, dissoc, get =====
+    println("\n===== MAP =====")
+    val originalMap = mapOf("name" to "Asha", "age" to "20")   // create
+    val mapAssoc = originalMap + ("city" to "Gurugram")        // assoc
+    val mapDissoc = originalMap - "age"                        // dissoc
+    println("Original map        : $originalMap")
+    println("get name            : ${originalMap["name"]}")
+    println("After assoc city    : $mapAssoc")
+    println("After dissoc age    : $mapDissoc")
+    println("Original (unchanged): $originalMap")
+
+    // ===== (4) SET: create, conj, disj, contains? =====
+    println("\n===== SET =====")
+    val originalSet = setOf(1, 2, 3)                    // create
+    val setConj = originalSet + 4                       // conj
+    val setDisj = originalSet - 2                       // disj
+    println("Original set        : $originalSet")
+    println("contains 2          : ${originalSet.contains(2)}")
+    println("contains 9          : ${originalSet.contains(9)}")
+    println("After conj 4        : $setConj")
+    println("After disj 2        : $setDisj")
+    println("Original (unchanged): $originalSet")
+}
