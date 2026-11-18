@@ -1,0 +1,41 @@
+fun main() {
+    val collections = listOf(
+        "Collection 1" to (1..10).toList(),
+        "Collection 2" to listOf(5, 12, 7, 20, 3, 9)
+    )
+
+    for ((name, coll) in collections) {
+        println("===== $name: $coll =====")
+
+        // (1) map: square each element
+        println("map (square)          : ${coll.map { it * it }}")
+
+        // (2) filter: retain only evens
+        println("filter (even)         : ${coll.filter { it % 2 == 0 }}")
+
+        // (3) reduce: sum and maximum
+        println("reduce (sum)          : ${coll.reduce { acc, x -> acc + x }}")
+        println("reduce (max)          : ${coll.reduce { acc, x -> if (acc > x) acc else x }}")
+
+        // (4) take and drop: slice a sequence
+        println("take 3                : ${coll.take(3)}")
+        println("drop 3                : ${coll.drop(3)}")
+        println("drop 2 then take 3    : ${coll.drop(2).take(3)}")
+
+        // Threading (->>) : filter even -> square -> sum
+        val chain1 = coll
+            .filter { it % 2 == 0 }
+            .map { it * it }
+            .reduce { acc, x -> acc + x }
+        println("->> even, square, sum : $chain1")
+
+        // Threading (->>) : double -> keep > 10 -> take 3
+        val chain2 = coll
+            .map { it * 2 }
+            .filter { it > 10 }
+            .take(3)
+        println("->> double, >10, take3: $chain2")
+
+        println("Original (unchanged)  : $coll\n")
+    }
+}
