@@ -1,0 +1,52 @@
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.Collections
+
+fun main() {
+    // (1) Static methods
+    println("===== STATIC METHODS =====")
+    println("Math.abs(-15)             : ${Math.abs(-15)}")
+    println("Math.max(7, 19)           : ${Math.max(7, 19)}")
+    println("Math.sqrt(144.0)          : ${Math.sqrt(144.0)}")
+    println("Integer.parseInt(\"42\")    : ${Integer.parseInt("42")}")
+    println("currentTimeMillis         : ${System.currentTimeMillis()}")
+
+    // (2) Create Java objects
+    println("\n===== CREATING OBJECTS =====")
+    val al = ArrayList<String>()
+    val hm = HashMap<String, Int>()
+    val sb = StringBuilder("Hello")
+    println("class of al               : ${al.javaClass}")
+    println("class of hm               : ${hm.javaClass}")
+
+    // (3) Instance methods
+    println("\n===== INSTANCE METHODS =====")
+    al.add("apple"); al.add("banana"); al.add("cherry")
+    println("ArrayList after add       : $al")
+    println(".size                     : ${al.size}")
+    println(".get(1)                   : ${al.get(1)}")
+    println(".contains(\"cherry\")       : ${al.contains("cherry")}")
+
+    hm.put("one", 1); hm.put("two", 2)
+    println("HashMap after put         : $hm")
+    println(".get(\"two\")               : ${hm.get("two")}")
+    println(".containsKey(\"one\")       : ${hm.containsKey("one")}")
+
+    sb.append(", World")
+    println("StringBuilder .append     : $sb")
+    println("Collections.max(al)       : ${Collections.max(al)}")
+
+    // (4) Convert between Kotlin and Java collections
+    println("\n===== COLLECTION CONVERSION =====")
+    val ktList = listOf(1, 2, 3)
+    val javaList = ArrayList(ktList)         // Kotlin -> Java
+    javaList.add(4)
+    val javaMap = HashMap(mapOf("x" to 10, "y" to 20))
+    println("Kotlin list (original)    : $ktList")
+    println("Java ArrayList (copy+add) : $javaList")
+    println("Kotlin list (unchanged)   : $ktList")
+    println("Java HashMap from map     : $javaMap")
+
+    println("al.toList()               : ${al.toList()}")   // Java -> Kotlin
+    println("hm.toMap()                : ${hm.toMap()}")
+}
