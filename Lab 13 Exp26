@@ -1,0 +1,58 @@
+// (1) & (2) Function with two default parameters (discountPercent and currency)
+fun calculateFinalPrice(
+    basePrice: Double,
+    discountPercent: Double = 10.0,
+    currency: String = "INR"
+): String {
+    val finalAmount = basePrice - (basePrice * discountPercent / 100.0)
+    return "%.2f %s (%.1f%% discount)".format(finalAmount, currency, discountPercent)
+}
+
+// (3) Function with vararg to accept a variable number of Int arguments and print them all
+fun printAllNumbers(label: String, vararg numbers: Int) {
+    print("$label (${numbers.size} items): ")
+    if (numbers.isEmpty()) {
+        println("none")
+    } else {
+        println(numbers.joinToString(prefix = "[", postfix = "]", separator = ", "))
+    }
+}
+
+// (4) Higher-order function accepting a lambda (Int) -> Int and applying it to a List<Int>
+fun transformList(items: List<Int>, operation: (Int) -> Int): List<Int> {
+    val result = mutableListOf<Int>()
+    for (item in items) {
+        result.add(operation(item))
+    }
+    return result
+}
+
+fun main() {
+    println("=== (1) Default Parameters ===")
+    println("Without defaults: ${calculateFinalPrice(1000.0)}")
+    println("With one default overridden: ${calculateFinalPrice(1000.0, 25.0)}")
+    println("With both defaults overridden: ${calculateFinalPrice(1000.0, 15.0, "USD")}")
+
+    println("\n=== (2) Named Arguments Out of Order ===")
+    println(
+        calculateFinalPrice(
+            currency = "EUR",
+            basePrice = 2000.0,
+            discountPercent = 5.0
+        )
+    )
+
+    println("\n=== (3) vararg Function ===")
+    printAllNumbers("Scores", 85, 92, 78, 95, 88)
+    printAllNumbers("Single value", 42)
+    printAllNumbers("Empty vararg")
+
+    println("\n=== (4) Higher-Order Function with (Int) -> Int ===")
+    val sampleList = listOf(1, 2, 3, 4, 5)
+    val squared = transformList(sampleList) { x -> x * x }
+    val tripledPlusTen = transformList(sampleList) { x -> x * 3 + 10 }
+
+    println("Original list: $sampleList")
+    println("Squared: $squared")
+    println("Tripled + 10: $tripledPlusTen")
+}
