@@ -1,0 +1,61 @@
+open System
+open System.Text.RegularExpressions
+
+// 1. Reverse a string and check if it is a palindrome (case-insensitive check on normalized text)
+let reverseString (s: string) : string =
+    s.ToCharArray()
+    |> Array.rev
+    |> String
+
+let isPalindrome (s: string) : bool =
+    let cleaned =
+        s.ToLowerInvariant()
+        |> Seq.filter Char.IsLetterOrDigit
+        |> Seq.toArray
+        |> String
+    cleaned = reverseString cleaned
+
+// 2. Active patterns to classify strings as purely alphabetic or purely numeric
+let (|AllLetters|_|) (s: string) =
+    if not (String.IsNullOrEmpty(s)) && Seq.forall Char.IsLetter s then Some s else None
+
+let (|AllDigits|_|) (s: string) =
+    if not (String.IsNullOrEmpty(s)) && Seq.forall Char.IsDigit s then Some s else None
+
+let transformString (s: string) : string =
+    match s with
+    | AllLetters letters -> letters.ToUpperInvariant()
+    | AllDigits digits -> digits + digits
+    | _ -> s
+
+// 3. Validate email address format using Regex + pattern matching
+let emailPattern = Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
+
+let validateEmail (email: string) : string =
+    match email with
+    | null -> "Invalid (null)"
+    | s when String.IsNullOrWhiteSpace(s) -> "Invalid (empty/whitespace)"
+    | s when emailPattern.IsMatch(s.Trim()) -> sprintf "Valid (%s)" (s.Trim())
+    | s -> sprintf "Invalid (%s)" s
+
+[<EntryPoint>]
+let main _ =
+    printfn "=== 1. Reverse & Palindrome Check ==="
+    let palindromeInputs = [ "madam"; "FSharp"; "racecar" ]
+    for item in palindromeInputs do
+        let rev = reverseString item
+        let pal = isPalindrome item
+        printfn "Input: %-10s | Reversed: %-10s | Palindrome: %b" item rev pal
+
+    printfn "\n=== 2. String Transformation (Alpha / Numeric / Mixed) ==="
+    let transformInputs = [ "functional"; "42"; "fsharp42" ]
+    for item in transformInputs do
+        let transformed = transformString item
+        printfn "Input: %-10s -> Transformed: %s" item transformed
+
+    printfn "\n=== 3. Email Validation ==="
+    let emailInputs = [ "student@university.edu"; "invalid-email"; "arjun.sharma@domain.co.in" ]
+    for email in emailInputs do
+        printfn "Input: %-26s -> %s" email (validateEmail email)
+
+    0
