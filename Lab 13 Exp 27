@@ -1,0 +1,91 @@
+class Student(
+    var rollNo: Int,
+    var name: String,
+    var course: String,
+    percentage: Double
+) {
+    // Encapsulate percentage so external callers cannot set invalid negative/over-100 values directly
+    var percentage: Double = clampPercentage(percentage)
+        private set
+
+    // Internal/private helper to normalize and validate percentage bounds
+    private fun clampPercentage(value: Double): Double {
+        return when {
+            value < 0.0 -> 0.0
+            value > 100.0 -> 100.0
+            else -> value
+        }
+    }
+
+    // Protected helper to determine grade from percentage
+    protected fun computeGrade(): String {
+        return when {
+            percentage >= 85.0 -> "A+"
+            percentage >= 75.0 -> "A"
+            percentage >= 60.0 -> "B"
+            percentage >= 40.0 -> "C"
+            else -> "F"
+        }
+    }
+
+    // Member function 1: Accept/update student data from user input
+    fun updateFromInput(defaultRollNo: Int, defaultName: String, defaultCourse: String, defaultPercentage: Double) {
+        println("--- Enter / Update Details for Student (Default Roll No: $defaultRollNo) ---")
+
+        print("Enter Roll Number: ")
+        val rollInput = readLine()?.trim()
+        rollNo = rollInput?.toIntOrNull() ?: defaultRollNo
+
+        print("Enter Name: ")
+        val nameInput = readLine()?.trim()
+        name = if (!nameInput.isNullOrEmpty()) nameInput else defaultName
+
+        print("Enter Course: ")
+        val courseInput = readLine()?.trim()
+        course = if (!courseInput.isNullOrEmpty()) courseInput else defaultCourse
+
+        print("Enter Percentage (0 - 100): ")
+        val pctInput = readLine()?.trim()
+        val parsedPct = pctInput?.toDoubleOrNull() ?: defaultPercentage
+        percentage = clampPercentage(parsedPct)
+    }
+
+    // Member function 2: Display all student details in a formatted manner
+    fun displayDetails() {
+        println("==========================================")
+        println("Roll No    : $rollNo")
+        println("Name       : $name")
+        println("Course     : $course")
+        println("Percentage : %.2f%%".format(percentage))
+        println("Grade      : ${computeGrade()}")
+        println("==========================================")
+    }
+}
+
+fun main() {
+    // Instantiate at least two Student objects using the primary constructor
+    val student1 = Student(101, "Ananya Sharma", "B.Sc Computer Science", 82.5)
+    val student2 = Student(102, "Rohan Verma", "BCA", 68.0)
+
+    println("Initial Student Records:")
+    student1.displayDetails()
+    student2.displayDetails()
+
+    // Update and display first student
+    student1.updateFromInput(
+        defaultRollNo = 101,
+        defaultName = "Ananya Sharma",
+        defaultCourse = "B.Sc Computer Science",
+        defaultPercentage = 88.0
+    )
+    student1.displayDetails()
+
+    // Update and display second student
+    student2.updateFromInput(
+        defaultRollNo = 102,
+        defaultName = "Rohan Verma",
+        defaultCourse = "BCA",
+        defaultPercentage = 74.5
+    )
+    student2.displayDetails()
+}
