@@ -1,0 +1,25 @@
+fun computeBonusRate(deptCode: String, yearsOfExperience: Int): Double {
+    return when (deptCode.uppercase()) {
+        "IT" -> if (yearsOfExperience > 5) 0.20 else 0.12
+        "HR" -> if (yearsOfExperience > 3) 0.15 else 0.08
+        "FIN" -> if (yearsOfExperience >= 4) 0.18 else 0.10
+        else -> 0.10
+    }
+}
+
+fun main() {
+    val baseSalary = 60000.0
+
+    val employees = listOf(
+        Triple("IT", 7, baseSalary),
+        Triple("HR", 4, baseSalary),
+        Triple("FIN", 2, baseSalary),
+        Triple("OPS", 6, baseSalary)
+    )
+
+    for ((dept, exp, salary) in employees) {
+        val rate = computeBonusRate(dept, exp)
+        val bonus = salary * rate
+        println("Dept: $dept | Exp: $exp yrs | Salary: %.2f | Bonus (%.0f%%): %.2f".format(salary, rate * 100, bonus))
+    }
+}
