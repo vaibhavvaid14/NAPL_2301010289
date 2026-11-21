@@ -1,0 +1,74 @@
+open System
+open System.Diagnostics
+
+// 1. Define three asynchronous workflows simulating I/O-bound / delayed tasks
+let fetchUserProfile (userId: int) =
+    async {
+        printfn "[%s] Starting Task 1: Fetching profile for User #%d..." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        do! Async.Sleep(1500) // Simulates 1.5s I/O delay
+        printfn "[%s] Completed Task 1: User #%d profile ready." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        return sprintf "Profile(User#%d: Priya Nair)" userId
+    }
+
+let fetchRecentOrders (userId: int) =
+    async {
+        printfn "[%s] Starting Task 2: Fetching orders for User #%d..." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        do! Async.Sleep(800) // Simulates 0.8s I/O delay (finishes first)
+        printfn "[%s] Completed Task 2: User #%d orders ready." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        return sprintf "Orders(User#%d: 3 items)" userId
+    }
+
+let fetchRecommendations (userId: int) =
+    async {
+        printfn "[%s] Starting Task 3: Computing recommendations for User #%d..." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        do! Async.Sleep(1200) // Simulates 1.2s delay (finishes second)
+        printfn "[%s] Completed Task 3: User #%d recommendations ready." (DateTime.Now.ToString("HH:mm:ss.fff")) userId
+        return sprintf "Recommendations(User#%d: F# Cookbook, Cloud Patterns)" userId
+    }
+
+[<EntryPoint>]
+let main argv =
+    let userId = 101
+    let stopwatch = Stopwatch.StartNew()
+
+    printfn "=== Launching 3 tasks concurrently with Async.Parallel ==="
+    printfn "Note: If run sequentially, total time would be ~3500 ms (1500 + 800 + 1200).\n"
+
+    // 2. Run all three async workflows in parallel and await all results
+    let results =
+        [
+            fetchUserProfile userId
+            fetchRecentOrders userId
+            fetchRecommendations userId
+        ]
+        |> Async.Parallel
+        |> Async.RunSynchronously
+
+    stopwatch.Stop()
+
+    // 3. Collect and print all results after parallel execution completes
+    printfn "\n=== All Parallel Tasks Completed in %d ms ===" stopwatch.ElapsedMilliseconds
+    printfn "Collected Results:"
+    for res in results do
+        printfn "  -> %s" res
+
+    // 4. Bonus demonstration using Async.StartChild for fine-grained control
+    printfn "\n=== Bonus: Launching tasks with Async.StartChild ==="
+    let childWorkflow =
+        async {
+            let! child1 = Async.StartChild(fetchRecentOrders 202)
+            let! child2 = Async.StartChild(fetchRecommendations 202)
+            let! child3 = Async.StartChild(fetchUserProfile 202)
+
+            printfn "[%s] Main child workflow continues while children run in background..." (DateTime.Now.ToString("HH:mm:ss.fff"))
+
+            let! r1 = child1
+            let! r2 = child2
+            let! r3 = child3
+            return [ r1; r2; r3 ]
+        }
+
+    let childResults = Async.RunSynchronously childWorkflow
+    printfn "StartChild Results: %A" childResults
+
+    0
