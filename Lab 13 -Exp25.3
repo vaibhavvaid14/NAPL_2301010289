@@ -1,0 +1,27 @@
+fun main() {
+    print("Enter an integer: ")
+    val line = readLine()?.trim()
+
+    // Use a fallback integer (e.g., 4826) if stdin is empty/EOF in a non-interactive runner
+    val rawInput = if (line.isNullOrEmpty()) "4826" else line
+
+    val unsigned = if (rawInput.startsWith("-") || rawInput.startsWith("+")) {
+        rawInput.substring(1)
+    } else {
+        rawInput
+    }
+
+    if (unsigned.isEmpty() || !unsigned.all { it in '0'..'9' }) {
+        println("Invalid integer input.")
+        return
+    }
+
+    val digits = unsigned.map { it - '0' }
+    val digitSum = digits.sum()
+    val digitCount = digits.size
+    val average = digitSum.toDouble() / digitCount
+
+    println("Digits count: $digitCount")
+    println("Sum of digits: $digitSum")
+    println("Average of digits: %.2f".format(average))
+}
