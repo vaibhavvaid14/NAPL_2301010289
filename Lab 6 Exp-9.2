@@ -1,0 +1,39 @@
+open System
+
+// Pure recursive primality test using trial division up to sqrt(n)
+let isPrime (n: int) : bool =
+    let rec checkDivisor (d: int) : bool =
+        if d * d > n then true
+        elif n % d = 0 then false
+        else checkDivisor (d + 2)
+
+    match n with
+    | x when x < 2 -> false
+    | 2 -> true
+    | x when x % 2 = 0 -> false
+    | _ -> checkDivisor 3
+
+let formatPrimeResult (n: int) : string =
+    if isPrime n then
+        sprintf "%d -> Prime" n
+    else
+        sprintf "%d -> Not Prime" n
+
+[<EntryPoint>]
+let main _ =
+    // Three distinct test sets covering edge cases, primes, and composites
+    let testSets = [
+        ("Set 1 (Edge & Small Numbers)", [ -7; 0; 1; 2; 3 ])
+        ("Set 2 (Primes)", [ 5; 17; 29; 79; 97 ])
+        ("Set 3 (Composites)", [ 4; 15; 49; 91; 100 ])
+    ]
+
+    testSets
+    |> List.iter (fun (label, numbers) ->
+        printfn "=== %s ===" label
+        numbers
+        |> List.map formatPrimeResult
+        |> List.iter (printfn "  %s")
+        printfn "")
+
+    0
